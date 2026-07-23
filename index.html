@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Debit Credit is a premium finance-related application that simplifies business loan requests, tracking, and approvals for vendors and administrators.">
+    <title>Debit Credit | Premium Vendor Loan Portal</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Background Elements -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- App Container -->
+    <div class="app-container">
+
+        <!-- App Header (Navbar) -->
+        <header class="app-header shadow-glass">
+            <div class="header-logo" id="logo-button">
+                <i data-lucide="wallet" class="logo-icon text-gradient"></i>
+                <span class="logo-text">Debit<span class="text-gradient">Credit</span></span>
+            </div>
+
+            <div class="header-user-profile hidden" id="user-profile-menu">
+                <div class="user-avatar" id="profile-avatar">
+                    <span id="user-initials">U</span>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="profile-name">Loading...</span>
+                    <span class="user-role badge" id="profile-role">Loading...</span>
+                </div>
+                <button class="btn btn-icon-only btn-logout" id="logout-btn" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- SECTION 1: AUTHENTICATION / LOGIN -->
+            <section id="login-section" class="auth-section">
+                <div class="auth-card shadow-glass">
+                    <div class="auth-header">
+                        <h2>Welcome to Debit Credit</h2>
+                        <p class="text-secondary">Select your portal to log in or register</p>
+                    </div>
+
+                    <!-- Role Switch Tabs -->
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" id="tab-vendor">
+                            <i data-lucide="store"></i> Vendor Portal
+                        </button>
+                        <button class="auth-tab" id="tab-admin">
+                            <i data-lucide="shield-check"></i> Admin Console
+                        </button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-username">Username or Email</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="mail" class="input-icon"></i>
+                                <input type="text" id="login-username" placeholder="Enter username..." required
+                                    autocomplete="username">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock" class="input-icon"></i>
+                                <input type="password" id="login-password" placeholder="••••••••" required
+                                    autocomplete="current-password">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full-width" id="login-submit-btn">
+                            Sign In <i data-lucide="arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <!-- Quick Demo logins -->
+                    <div class="demo-logins">
+                        <span class="demo-title">Quick Demo Login</span>
+                        <div class="demo-buttons-container">
+                            <button class="btn btn-outline btn-demo" id="demo-vendor-btn">
+                                <i data-lucide="store"></i> Vendor Account
+                            </button>
+                            <button class="btn btn-outline btn-demo" id="demo-admin-btn">
+                                <i data-lucide="shield-check"></i> Admin Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: VENDOR PORTAL -->
+            <section id="vendor-dashboard" class="dashboard-section hidden">
+                <!-- Welcome Title -->
+                <div class="dashboard-title-row">
+                    <div>
+                        <h1 class="welcome-text">Vendor Portal</h1>
+                        <p class="text-secondary" id="vendor-welcome-subtitle">Welcome back, Vendor Business</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-request-loan-modal">
+                        <i data-lucide="plus-circle"></i> Request Loan
+                    </button>
+                </div>
+
+                <!-- Vendor Metrics Grid -->
+                <div class="metrics-grid">
+                    <!-- Metric 1: Active Loan Outstanding -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Outstanding Loan</span>
+                            <div class="metric-icon-bg bg-primary-dim">
+                                <i data-lucide="badge-dollar-sign" class="text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="vendor-outstanding-val">₹0.00</div>
+                        <div class="metric-trend text-secondary" id="vendor-outstanding-sub">Total remaining amount
+                        </div>
+                    </div>
+
+                    <!-- Metric 2: Next Repayment -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Next Installment</span>
+                            <div class="metric-icon-bg bg-warning-dim">
+                                <i data-lucide="calendar" class="text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="vendor-next-installment-val">₹0.00</div>
+                        <div class="metric-trend text-warning" id="vendor-next-installment-date">Due Date: -</div>
+                    </div>
+
+                    <!-- Metric 3: Active Interest Rate -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Active Interest Rate</span>
+                            <div class="metric-icon-bg bg-success-dim">
+                                <i data-lucide="trending-up" class="text-success"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="vendor-interest-rate-val">0.0%</div>
+                        <div class="metric-trend text-success">Per Annum (Simple)</div>
+                    </div>
+
+                    <!-- Metric 4: Loan Duration / Term -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Remaining Term</span>
+                            <div class="metric-icon-bg bg-info-dim">
+                                <i data-lucide="clock" class="text-info"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="vendor-remaining-term-val">0 / 0 months</div>
+                        <div class="metric-trend text-info" id="vendor-term-repaid">Months repaid</div>
+                    </div>
+                </div>
+
+                <!-- Two-Column Layout -->
+                <div class="dashboard-content-grid">
+                    <!-- Left Column: Repayment Simulator and Details -->
+                    <div class="dashboard-card shadow-glass grid-col-main">
+                        <div class="card-header">
+                            <h3><i data-lucide="activity"></i> Active Loan Status</h3>
+                            <div class="header-actions" id="vendor-loan-repay-actions">
+                                <button class="btn btn-sm btn-success" id="btn-vendor-repay-installment">
+                                    <i data-lucide="credit-card"></i> Pay Installment
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body flex-row-responsive">
+                            <!-- Loan Repayment Progress Chart -->
+                            <div class="chart-container-half">
+                                <canvas id="vendorRepaymentChart"></canvas>
+                            </div>
+                            <!-- Loan Breakdown details -->
+                            <div class="loan-breakdown-details" id="vendor-loan-breakdown-list">
+                                <div class="info-list-item">
+                                    <span class="info-label text-secondary">Original Loan Amount</span>
+                                    <span class="info-value text-bold" id="breakdown-orig-amt">$0.00</span>
+                                </div>
+                                <div class="info-list-item">
+                                    <span class="info-label text-secondary">Total Interest Charged</span>
+                                    <span class="info-value" id="breakdown-total-interest">$0.00</span>
+                                </div>
+                                <div class="info-list-item">
+                                    <span class="info-label text-secondary">Total Repayable</span>
+                                    <span class="info-value" id="breakdown-total-repay">$0.00</span>
+                                </div>
+                                <div class="info-list-item">
+                                    <span class="info-label text-secondary">Total Amount Paid</span>
+                                    <span class="info-value text-success text-bold"
+                                        id="breakdown-total-paid">$0.00</span>
+                                </div>
+                                <div class="info-list-item">
+                                    <span class="info-label text-secondary">Loan Purpose</span>
+                                    <span class="info-value" id="breakdown-purpose">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Loan Request Quick Slider -->
+                    <div class="dashboard-card shadow-glass grid-col-side" id="vendor-quick-apply-card">
+                        <div class="card-header">
+                            <h3><i data-lucide="calculator"></i> Loan Calculator</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="quick-loan-form" class="quick-calculator-form">
+                                <div class="form-group-slider">
+                                    <div class="slider-header">
+                                        <label for="loan-amount-slider">Requested Amount</label>
+                                        <span class="slider-display-val text-primary"
+                                            id="amount-slider-val">₹10,000</span>
+                                    </div>
+                                    <input type="range" id="loan-amount-slider" min="1000" max="100000" step="500"
+                                        value="10000" class="input-slider">
+                                </div>
+
+                                <div class="form-group-slider">
+                                    <div class="slider-header">
+                                        <label for="loan-term-slider">Loan Term (Months)</label>
+                                        <span class="slider-display-val text-primary" id="term-slider-val">12 mo</span>
+                                    </div>
+                                    <input type="range" id="loan-term-slider" min="3" max="36" step="1" value="12"
+                                        class="input-slider">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="loan-purpose-input">Purpose of Loan</label>
+                                    <input type="text" id="loan-purpose-input"
+                                        placeholder="e.g. Purchase Inventory, Equipment Upgrade" required
+                                        class="input-text">
+                                </div>
+
+                                <!-- Live Loan Calculation Preview -->
+                                <div class="calculation-preview shadow-inset">
+                                    <div class="preview-item">
+                                        <span class="preview-label">Estimated Interest Rate</span>
+                                        <span class="preview-value text-success" id="calc-interest-rate">8.5%</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="preview-label">Estimated Monthly EMI</span>
+                                        <span class="preview-value text-bold text-gradient"
+                                            id="calc-monthly-emi">₹904.17</span>
+                                    </div>
+                                    <div class="preview-item">
+                                        <span class="preview-label">Total Payable</span>
+                                        <span class="preview-value" id="calc-total-payable">₹10,850.00</span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-full-width"
+                                    id="btn-submit-loan-request">
+                                    Submit Loan Request <i data-lucide="send"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Full Width: Loan History Table -->
+                <div class="dashboard-card shadow-glass margin-top-lg">
+                    <div class="card-header">
+                        <h3><i data-lucide="history"></i> Loan History & Status</h3>
+                    </div>
+                    <div class="card-body no-padding table-responsive">
+                        <table class="data-table" id="vendor-loan-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Loan ID</th>
+                                    <th>Amount</th>
+                                    <th>Term</th>
+                                    <th>Interest Rate</th>
+                                    <th>Estimated EMI</th>
+                                    <th>Outstanding</th>
+                                    <th>Status</th>
+                                    <th>Request Date</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendor-loan-history-tbody">
+                                <!-- Populated dynamically by JS -->
+                                <tr>
+                                    <td colspan="9" class="text-center text-secondary">No loan requests found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: ADMIN PORTAL -->
+            <section id="admin-dashboard" class="dashboard-section hidden">
+                <!-- Welcome Title -->
+                <div class="dashboard-title-row">
+                    <div>
+                        <h1 class="welcome-text">Admin Console</h1>
+                        <p class="text-secondary">Global overview of all commercial vendor loans</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-register-user-modal">
+                        <i data-lucide="user-plus"></i> Register Vendor
+                    </button>
+                </div>
+
+                <!-- Admin Metrics Grid -->
+                <div class="metrics-grid">
+                    <!-- Metric 1: Total Capital Disbursed -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Total Capital Disbursed</span>
+                            <div class="metric-icon-bg bg-primary-dim">
+                                <i data-lucide="layers" class="text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="admin-total-capital-val">₹0.00</div>
+                        <div class="metric-trend" id="admin-active-loans-count">0 Active loans</div>
+                    </div>
+
+                    <!-- Metric 2: Total Outstanding Balance -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Outstanding Balance</span>
+                            <div class="metric-icon-bg bg-warning-dim">
+                                <i data-lucide="coins" class="text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="admin-outstanding-val">₹0.00</div>
+                        <div class="metric-trend text-warning" id="admin-total-repaid-percentage">0% principal repaid
+                        </div>
+                    </div>
+
+                    <!-- Metric 3: Total Interest Generated -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Interest Generated</span>
+                            <div class="metric-icon-bg bg-success-dim">
+                                <i data-lucide="bar-chart-3" class="text-success"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="admin-interest-generated-val">₹0.00</div>
+                        <div class="metric-trend text-success">Accruing over loan terms</div>
+                    </div>
+
+                    <!-- Metric 4: Active Vendors -->
+                    <div class="metric-card shadow-glass card-hover">
+                        <div class="metric-card-header">
+                            <span class="metric-title text-secondary">Active Borrowers</span>
+                            <div class="metric-icon-bg bg-info-dim">
+                                <i data-lucide="users-2" class="text-info"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="admin-active-borrowers-val">0</div>
+                        <div class="metric-trend text-info" id="admin-total-vendors-registered">0 vendors total
+                            registered</div>
+                    </div>
+                </div>
+
+                <!-- Two-Column Layout -->
+                <div class="dashboard-content-grid-admin">
+                    <!-- Left Component: Loan Approvals Queue -->
+                    <div class="dashboard-card shadow-glass">
+                        <div class="card-header">
+                            <h3><i data-lucide="stamp"></i> Pending Loan Approvals</h3>
+                            <span class="badge badge-warning" id="admin-pending-approvals-count">0 Requests</span>
+                        </div>
+                        <div class="card-body no-padding table-responsive">
+                            <table class="data-table" id="admin-approvals-table">
+                                <thead>
+                                    <tr>
+                                        <th>Vendor</th>
+                                        <th>Requested</th>
+                                        <th>Term</th>
+                                        <th>Estimated EMI</th>
+                                        <th>Purpose</th>
+                                        <th>Interest Rate (Est.)</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-approvals-tbody">
+                                    <!-- Populated dynamically by JS -->
+                                    <tr>
+                                        <td colspan="7" class="text-center text-secondary">No pending requests to
+                                            process</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vendor Directory (Primary Requirement) -->
+                <div class="dashboard-card shadow-glass margin-top-lg">
+                    <div class="card-header flex-row-responsive">
+                        <div>
+                            <h3><i data-lucide="users"></i> Vendor Accounts & Loans</h3>
+                            <p class="text-secondary card-subtitle">Detailed tracking of repayments, loan durations, and
+                                interest rates.</p>
+                        </div>
+                        <div class="header-filters">
+                            <div class="input-wrapper search-wrapper">
+                                <i data-lucide="search" class="input-icon"></i>
+                                <input type="text" id="admin-vendor-search" placeholder="Search vendor name or ID..."
+                                    class="input-text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body no-padding table-responsive">
+                        <table class="data-table" id="admin-vendor-directory-table">
+                            <thead>
+                                <tr>
+                                    <th>Vendor Name</th>
+                                    <th>Loan Count</th>
+                                    <th>Total Loaned</th>
+                                    <th>Outstanding Balance</th>
+                                    <th>Interest Rate</th>
+                                    <th>Remaining Term</th>
+                                    <th>Repayment Progress</th>
+                                    <th>Next Installment</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-vendor-directory-tbody">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- App Footer -->
+        <footer class="app-footer text-secondary">
+            <p>&copy; 2026 Debit Credit Finance Inc. All rights reserved. Secured with TLS-256 encryption.</p>
+        </footer>
+    </div>
+
+    <!-- MODAL 1: Loan Application Modal (Alternative to quick calculator) -->
+    <div id="loan-request-modal" class="modal-overlay hidden">
+        <div class="modal shadow-glass">
+            <div class="modal-header">
+                <h2><i data-lucide="calculator" class="text-primary"></i> Request New Business Loan</h2>
+                <button class="btn btn-icon-only btn-close-modal" id="btn-close-loan-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="modal-loan-form" class="quick-calculator-form">
+                    <div class="form-group-slider">
+                        <div class="slider-header">
+                            <label for="modal-amount-slider">Requested Amount</label>
+                            <span class="slider-display-val text-primary" id="modal-amount-val">₹10,000</span>
+                        </div>
+                        <input type="range" id="modal-amount-slider" min="1000" max="100000" step="1000" value="10000"
+                            class="input-slider">
+                    </div>
+
+                    <div class="form-group-slider">
+                        <div class="slider-header">
+                            <label for="modal-term-slider">Loan Term (Months)</label>
+                            <span class="slider-display-val text-primary" id="modal-term-val">12 mo</span>
+                        </div>
+                        <input type="range" id="modal-term-slider" min="3" max="36" step="1" value="12"
+                            class="input-slider">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-purpose-input">Purpose of Loan</label>
+                        <input type="text" id="modal-purpose-input" placeholder="e.g. Restock Inventory, Expansion"
+                            required class="input-text">
+                    </div>
+
+                    <div class="calculation-preview shadow-inset">
+                        <div class="preview-item">
+                            <span class="preview-label">Interest Rate</span>
+                            <span class="preview-value text-success" id="modal-calc-interest">8.5%</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-label">Estimated Monthly Payment</span>
+                            <span class="preview-value text-bold text-gradient" id="modal-calc-emi">₹904.17</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-label">Total Repayable Amount</span>
+                            <span class="preview-value text-secondary" id="modal-calc-total">₹10,850.00</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-outline" id="btn-cancel-loan-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="modal-submit-loan-btn">
+                            Apply Now <i data-lucide="check-circle-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Admin Loan approval parameters modal -->
+    <div id="admin-approval-modal" class="modal-overlay hidden">
+        <div class="modal shadow-glass">
+            <div class="modal-header">
+                <h2><i data-lucide="edit-3" class="text-primary"></i> Process Loan Request</h2>
+                <button class="btn btn-icon-only btn-close-modal" id="btn-close-approval-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="loan-details-summary shadow-inset">
+                    <div class="summary-row">
+                        <span class="label">Vendor Name:</span>
+                        <span class="val text-bold" id="admin-modal-vendor-name">Business Ltd.</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Requested Amount:</span>
+                        <span class="val text-primary text-bold" id="admin-modal-req-amt">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Requested Term:</span>
+                        <span class="val" id="admin-modal-req-term">12 mo</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Loan Purpose:</span>
+                        <span class="val" id="admin-modal-req-purpose">-</span>
+                    </div>
+                </div>
+
+                <form id="admin-approve-form" class="quick-calculator-form margin-top-md">
+                    <input type="hidden" id="admin-modal-loan-id">
+
+                    <div class="form-group">
+                        <label for="admin-modal-rate-input">Approved Interest Rate (%)</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="percent" class="input-icon"></i>
+                            <input type="number" id="admin-modal-rate-input" step="0.1" min="1" max="40" required
+                                class="input-text">
+                        </div>
+                        <p class="form-hint text-secondary">Modify the interest rate relative to credit score risk</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-modal-term-input">Approved Term (Months)</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="calendar" class="input-icon"></i>
+                            <input type="number" id="admin-modal-term-input" step="1" min="3" max="60" required
+                                class="input-text">
+                        </div>
+                        <p class="form-hint text-secondary">Optionally extend or shorten the repayment period</p>
+                    </div>
+
+                    <div class="live-recalc-preview-admin shadow-inset">
+                        <div class="preview-item">
+                            <span class="preview-label">Approved Monthly Payment</span>
+                            <span class="preview-value text-bold text-success" id="admin-modal-calc-emi">₹0.00</span>
+                        </div>
+                        <div class="preview-item">
+                            <span class="preview-label">Approved Total Repayable</span>
+                            <span class="preview-value" id="admin-modal-calc-total">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-danger" id="btn-reject-loan-from-modal">
+                            <i data-lucide="x-circle"></i> Reject Loan
+                        </button>
+                        <button type="submit" class="btn btn-success" id="btn-approve-loan-from-modal">
+                            <i data-lucide="check-circle"></i> Approve & Issue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Vendor Details Modal (View History) -->
+    <div id="vendor-details-modal" class="modal-overlay hidden">
+        <div class="modal modal-lg shadow-glass">
+            <div class="modal-header">
+                <h2><i data-lucide="user" class="text-primary"></i> Vendor Loan Details</h2>
+                <button class="btn btn-icon-only btn-close-modal" id="btn-close-details-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="vendor-header-details">
+                    <div class="profile-badge-lg" id="details-vendor-initials">VB</div>
+                    <div>
+                        <h3 id="details-vendor-name">Vendor Business Ltd.</h3>
+                        <p class="text-secondary" id="details-vendor-email">vendor@test.com</p>
+                    </div>
+                </div>
+
+                <h4 class="margin-top-md">Loan & Payment History</h4>
+                <div class="table-responsive margin-top-sm">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Amount</th>
+                                <th>Interest Rate</th>
+                                <th>Remaining Term</th>
+                                <th>Total Repayable</th>
+                                <th>Total Repaid</th>
+                                <th>Outstanding</th>
+                                <th>Status</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody id="details-vendor-history-tbody">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Admin User Registration Modal -->
+    <div id="register-user-modal" class="modal-overlay hidden">
+        <div class="modal shadow-glass">
+            <div class="modal-header">
+                <h2><i data-lucide="user-plus" class="text-primary"></i> Register New User</h2>
+                <button class="btn btn-icon-only btn-close-modal" id="btn-close-register-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="register-user-form" class="quick-calculator-form">
+                    <div class="form-group">
+                        <label for="register-name">Full Name / Business Name</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="register-name" placeholder="e.g. Globex Logistics" required class="input-text">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="register-email" placeholder="e.g. billing@globex.com" required class="input-text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user-check" class="input-icon"></i>
+                            <input type="text" id="register-username" placeholder="e.g. globex" required class="input-text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="register-password" placeholder="••••••••" required class="input-text" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-role">Account Type / Role</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="shield" class="input-icon"></i>
+                            <select id="register-role" class="input-text" style="padding-left: 44px; appearance: none; background: rgba(0, 0, 0, 0.2); color: white;" required>
+                                <option value="vendor" selected style="background-color: var(--bg-dark); color: white;">Vendor</option>
+                                <option value="admin" style="background-color: var(--bg-dark); color: white;">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-outline" id="btn-cancel-register-modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="register-submit-btn">
+                            Create Account <i data-lucide="check-circle"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Core Script -->
+    <script src="app.js"></script>
+</body>
+
+</html>
